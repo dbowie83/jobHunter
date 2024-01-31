@@ -4,11 +4,11 @@ import axios from 'axios';
 function JobPosting(props) {
 	return (
 		<div className='jobPosting'>
-			<h1> {props.job.company.display_name}</h1>
+			<h2> {props.job.company.display_name}</h2>
 			<h2>{props.job.title}</h2>
 			<p>{props.job.description}</p>
 			<p>{props.job.location.display_name}</p>
-			<a href={props.job.redirect_url}>View job</a>
+			<a href={props.job.redirect_url} className='btn'>View job</a>
 		</div>
 	)
 }
@@ -118,15 +118,18 @@ export default function Page(){
 		}
 	]
 	const [data, setData] = useState(dummyData);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [buttonClicked, setButtonClicked] = useState(false);
 
 	const fetchData  = async () => {
 		try {
+			setLoading(true);
+
 			//can go here to edit search params easily:
 			// https://developer.adzuna.com/activedocs#!/adzuna/search
 
+			//FILL IN YOUR API LINK HERE:
 			let adzunaAPI = ''
 			const response = await axios.get(adzunaAPI);
 			console.log(response.data.results)
@@ -168,19 +171,16 @@ export default function Page(){
 	  return (
 		<div className='homePage'>
 			<h1>Job Hunter</h1>
-			<button onClick={handleButtonClick} disabled={buttonClicked}>Hunt</button>
-			
-			{data && //conditional rendering. check if data has been fetched. 
-				data.map((job, index) => (
-					<JobPosting key={index} job={job}></JobPosting>
-				))
-			}
-			
+			<button className='btn' onClick={handleButtonClick} disabled={buttonClicked || loading}>
+				{loading ? 'Loading...' : 'Hunt'}
+			</button>
+			<div id='jobsContainer'>
+				{data && //conditional rendering. check if data has been fetched. 
+					data.map((job, index) => (
+						<JobPosting key={index} job={job}></JobPosting>
+					))
+				}
+			</div>
 		</div>
 	  );
 }
-
-/*
-to do:
-- clean up css
-*/
